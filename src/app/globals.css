@@ -1,0 +1,131 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* PizzaHub palette: tomato red, oven orange, mozzarella cream, basil green accent */
+:root {
+  --radius: 0.85rem;
+  --background: #fff8ef;
+  --foreground: #2b1810;
+  --card: #ffffff;
+  --card-foreground: #2b1810;
+  --popover: #ffffff;
+  --popover-foreground: #2b1810;
+  --primary: #c8261d;
+  --primary-foreground: #fffaf3;
+  --secondary: #fdebd3;
+  --secondary-foreground: #7a2a12;
+  --muted: #f7ead9;
+  --muted-foreground: #7b6153;
+  --accent: #f28a1a;
+  --accent-foreground: #2b1810;
+  --destructive: #b42318;
+  --success: #2f7d46;
+  --warning: #c27803;
+  --border: #ecd9c2;
+  --input: #e6d0b6;
+  --ring: #e0572b;
+  --basil: #3f7d3a;
+  --crust: #e9a24b;
+  --sidebar: #2b1810;
+  --sidebar-foreground: #fbe9d5;
+  --chart-1: #c8261d;
+  --chart-2: #f28a1a;
+  --chart-3: #3f7d3a;
+  --chart-4: #e9a24b;
+  --chart-5: #7a2a12;
+}
+
+.dark {
+  --background: #1a110d;
+  --foreground: #fbeee0;
+  --card: #241813;
+  --card-foreground: #fbeee0;
+  --popover: #241813;
+  --popover-foreground: #fbeee0;
+  --primary: #ef4a3a;
+  --primary-foreground: #1a110d;
+  --secondary: #3a241a;
+  --secondary-foreground: #fbd9b4;
+  --muted: #2e1f18;
+  --muted-foreground: #c9ad98;
+  --accent: #f59a33;
+  --accent-foreground: #1a110d;
+  --destructive: #f04438;
+  --success: #4fb36b;
+  --warning: #f0a92e;
+  --border: #3d2a20;
+  --input: #4a3327;
+  --ring: #f59a33;
+  --sidebar: #120b08;
+  --sidebar-foreground: #fbeee0;
+}
+
+@theme inline {
+  --font-sans: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces Variable", Georgia, serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-basil: var(--basil);
+  --color-crust: var(--crust);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display tracking-tight;
+  }
+}
+
+/* subtle checkered tablecloth texture used on a few sections */
+.bg-checker {
+  background-image:
+    linear-gradient(45deg, color-mix(in oklab, var(--primary) 7%, transparent) 25%, transparent 25%),
+    linear-gradient(-45deg, color-mix(in oklab, var(--primary) 7%, transparent) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, color-mix(in oklab, var(--primary) 7%, transparent) 75%),
+    linear-gradient(-45deg, transparent 75%, color-mix(in oklab, var(--primary) 7%, transparent) 75%);
+  background-size: 28px 28px;
+  background-position: 0 0, 0 14px, 14px -14px, -14px 0;
+}
+
+.container-px {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
