@@ -44,7 +44,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
             <div><dt className="text-muted-foreground">Requested on</dt><dd className="mt-1 font-semibold">{formatDate(o.createdAt, true)}</dd></div>
             <div className="sm:col-span-2"><dt className="flex items-center gap-1.5 text-muted-foreground"><MapPin className="size-4" /> Delivery address</dt><dd className="mt-1 font-semibold">{o.deliveryAddress}</dd></div>
             <div className="sm:col-span-2"><dt className="flex items-center gap-1.5 text-muted-foreground"><MessageSquare className="size-4" /> Special instructions</dt><dd className="mt-1">{o.message || <span className="italic text-muted-foreground">None</span>}</dd></div>
-            <div><dt className="text-muted-foreground">Payment</dt><dd className="mt-1 font-semibold">Cash on Delivery</dd></div>
+            <div><dt className="text-muted-foreground">Payment</dt><dd className="mt-1 font-semibold">Demo card (paid)</dd></div>
           </dl>
           {o.status === "pending" && <Button variant="destructive" className="mt-6" onClick={() => setConfirm(true)}>Cancel order</Button>}
         </div>

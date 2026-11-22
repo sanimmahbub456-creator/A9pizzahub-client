@@ -6,7 +6,7 @@ const steps = [
   { icon: Search, title: "Browse & filter", text: "Search by name, category, location or price." },
   { icon: ClipboardList, title: "Place your order", text: "Choose a delivery date, address and any special notes." },
   { icon: PackageCheck, title: "Vendor confirms", text: "The pizzeria accepts your order and starts the oven." },
-  { icon: Truck, title: "Enjoy it hot", text: "Your pizza arrives on the date you picked. Pay on delivery." },
+  { icon: Truck, title: "Enjoy it hot", text: "Your pizza arrives on the date you picked. Pay securely at checkout." },
 ];
 
 export function HowItWorks() {
