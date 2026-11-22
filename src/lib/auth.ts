@@ -6,12 +6,21 @@ import { jwt } from "better-auth/plugins";
 import { ObjectId } from "mongodb";
 import { db, mongoClient } from "./mongo";
 
-const baseURL = (process.env.BETTER_AUTH_URL ?? "http://localhost:3000").replace(/\/$/, "");
+// trim() protects against stray spaces / line breaks pasted into hosting env vars
+const baseURL = (process.env.BETTER_AUTH_URL || "http://localhost:3000").trim().replace(/\/$/, "");
+const trusted = [
+  baseURL,
+  process.env.NEXT_PUBLIC_APP_URL,
+  process.env.VERCEL_PROJECT_PRODUCTION_URL && `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`,
+]
+  .filter((u): u is string => !!u)
+  .map((u) => u.trim().replace(/\/$/, ""));
 const PASSWORD_RULE = /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
 
 export const auth = betterAuth({
   baseURL,
   secret: process.env.BETTER_AUTH_SECRET,
+  trustedOrigins: trusted,
   database: mongodbAdapter(db, { client: mongoClient, transaction: false }),
 
   emailAndPassword: { enabled: true, minPasswordLength: 6, autoSignIn: true },
