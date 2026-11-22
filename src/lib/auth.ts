@@ -32,11 +32,6 @@ export const auth = betterAuth({
     },
   },
 
-  // Lets a user who signed up with email/password also sign in with Google (same verified Gmail address)
-  account: {
-    accountLinking: { enabled: true, trustedProviders: ["google"] },
-  },
-
   user: {
     modelName: "users",
     // input:false => none of these can be set or changed by the client through Better Auth endpoints
