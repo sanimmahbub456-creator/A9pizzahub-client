@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
-import { getServerSession } from "@/lib/session";
+import { SessionError } from "@/components/shared/SessionError";
+import { getServerSessionSafe } from "@/lib/session";
 import type { Role } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Dashboard" };
+// always render per request (reads the session cookie)
+export const dynamic = "force-dynamic";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const session = await getServerSession();
+  const { session, error } = await getServerSessionSafe();
+  if (error) return <SessionError message={error} />;
   if (!session) redirect("/signin?redirect=/dashboard");
   const u = session.user as typeof session.user & { role: Role; onboarded?: boolean; isBlocked?: boolean; subscriptionPlan?: string };
   if (u.isBlocked) redirect("/signin?blocked=1");
