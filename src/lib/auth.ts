@@ -32,6 +32,11 @@ export const auth = betterAuth({
     },
   },
 
+  // Lets a user who signed up with email/password also sign in with Google (same verified Gmail address)
+  account: {
+    accountLinking: { enabled: true, trustedProviders: ["google"] },
+  },
+
   user: {
     modelName: "users",
     // input:false => none of these can be set or changed by the client through Better Auth endpoints
@@ -104,6 +109,10 @@ export const auth = betterAuth({
   plugins: [
     // Issues short-lived JWTs (GET /api/auth/token) that the Express API verifies via /api/auth/jwks
     jwt({
+      // Store the signing key without secret-based encryption so local + Vercel can share it
+      jwks: { disablePrivateKeyEncryption: true },
+      // We fetch tokens via /token, so get-session (used by dashboard pages) doesn't need to sign one
+      disableSettingJwtHeader: true,
       jwt: {
         issuer: baseURL,
         audience: baseURL,
