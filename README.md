@@ -15,7 +15,9 @@ CLIENT_REPO=https://github.com/sanimmahbub456-creator/A9pizzahub-client
 Stripe Test Card (Vendor Premium Upgrade)
 
 STRIPE_TEST_CARD=4242424242424242
+
 EXPIRY_DATE=12/34
+
 CVC=123
 
 ## Key features
