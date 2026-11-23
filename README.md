@@ -1,14 +1,19 @@
 # PizzaHub 🍕 Pizza Ordering & Delivery Platform
 
 PizzaHub connects hungry customers with local pizzerias. Customers browse and order, vendors publish menus and manage orders, and admins moderate everything.
+ADMIN_EMAIL=admin@pizzahub.com
+ADMIN_PASSWORD=Admin123
 
-Admin Email: admin@pizzahub.com
-Admin Password: Admin123
-Live Site Link: https://a9pizzahub-client.vercel.app
-GitHub Repository (Server): https://github.com/sanimmahbub456-creator/A9pizzahub-server
-GitHub Repository (Client): https://github.com/sanimmahbub456-creator/A9pizzahub-client
-Additional instructions:
-Stripe test card for the vendor Premium upgrade: 4242 4242 4242 4242, any future expiry date (e.g. 12/34), any CVC (e.g. 123).
+LIVE_SITE=https://a9pizzahub-client.vercel.app
+
+SERVER_REPO=https://github.com/sanimmahbub456-creator/A9pizzahub-server
+
+CLIENT_REPO=https://github.com/sanimmahbub456-creator/A9pizzahub-client
+
+# Stripe Test Card (Vendor Premium Upgrade)
+STRIPE_TEST_CARD=4242424242424242
+EXPIRY_DATE=12/34
+CVC=123
 
 ## Key features
 
