@@ -74,3 +74,13 @@ export async function uploadImage(file: File): Promise<string> {
   if (!res.ok || !json.url) throw new Error(json.message ?? "Image upload failed");
   return json.url as string;
 }
+
+/** Re-host an image link on ImgBB through our own Next.js route, so item images always live on ImgBB */
+export async function uploadImageUrl(url: string): Promise<string> {
+  const form = new FormData();
+  form.append("url", url.trim());
+  const res = await fetch("/api/upload", { method: "POST", body: form });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok || !json.url) throw new Error(json.message ?? "Image upload failed");
+  return json.url as string;
+}

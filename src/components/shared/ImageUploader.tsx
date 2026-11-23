@@ -1,12 +1,14 @@
 "use client";
-import { ImagePlus, Loader2, X } from "lucide-react";
+import { ImagePlus, Link2, Loader2, X } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
-import { errorMessage, uploadImage } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { errorMessage, uploadImage, uploadImageUrl } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
-/** Uploads files to ImgBB (via /api/upload) and returns hosted URLs */
+/** Uploads files (or image links) to ImgBB via /api/upload and returns hosted URLs */
 export function ImageUploader({
   value,
   onChange,
@@ -22,6 +24,27 @@ export function ImageUploader({
 }) {
   const ref = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [link, setLink] = useState("");
+  const [addingLink, setAddingLink] = useState(false);
+  const allowLink = shape === "square";
+
+  const onLink = async () => {
+    const url = link.trim();
+    if (!url) return;
+    if (value.length >= max) return toast.info(`You can add up to ${max} image${max > 1 ? "s" : ""}`);
+    if (!/^https?:\/\//i.test(url)) return toast.error("Please paste a link that starts with http:// or https://");
+    setAddingLink(true);
+    try {
+      const hosted = await uploadImageUrl(url);
+      onChange([...value, hosted]);
+      setLink("");
+      toast.success("Image added");
+    } catch (e) {
+      toast.error(`Couldn't add image: ${errorMessage(e)}`);
+    } finally {
+      setAddingLink(false);
+    }
+  };
 
   const onFiles = async (files: FileList | null) => {
     if (!files?.length) return;
@@ -44,7 +67,7 @@ export function ImageUploader({
 
   const tile = shape === "circle" ? "size-24 rounded-full" : "aspect-square w-full rounded-xl";
 
-  return (
+  const tiles = (
     <div className={cn(shape === "circle" ? "flex items-center gap-4" : "grid grid-cols-3 gap-3 sm:grid-cols-5")}>
       {value.map((src, i) => (
         <div key={src} className={cn("relative overflow-hidden border bg-muted", tile)}>
@@ -76,6 +99,41 @@ export function ImageUploader({
         </button>
       )}
       <input ref={ref} type="file" accept="image/*" multiple={max > 1} hidden onChange={(e) => onFiles(e.target.files)} />
+    </div>
+  );
+
+  if (!allowLink) return tiles;
+
+  return (
+    <div className="space-y-3">
+      {tiles}
+      {value.length < max && (
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <div className="relative flex-1">
+            <Link2 className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="url"
+              inputMode="url"
+              placeholder="…or paste an image link (https://…)"
+              value={link}
+              disabled={addingLink}
+              onChange={(e) => setLink(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault(); // don't submit the whole form
+                  onLink();
+                }
+              }}
+              className="pl-9"
+              aria-label="Image link"
+            />
+          </div>
+          <Button type="button" variant="outline" onClick={onLink} disabled={addingLink || !link.trim()}>
+            {addingLink ? <Loader2 className="animate-spin" /> : <ImagePlus />}
+            {addingLink ? "Adding…" : "Add link"}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
