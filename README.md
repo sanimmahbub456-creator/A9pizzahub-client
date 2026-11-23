@@ -2,7 +2,7 @@
 
 PizzaHub connects hungry customers with local pizzerias. Customers browse and order, vendors publish menus and manage orders, and admins moderate everything.
 
-ADMIN_EMAIL=admin@pizzahub.com
+ADMIN_EMAIL= admin@pizzahub.com
 
 ADMIN_PASSWORD= Admin123
 
