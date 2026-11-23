@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { UserMenu } from "@/components/layout/UserMenu";
 import { Logo } from "@/components/shared/Logo";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -16,6 +17,12 @@ import { clearTokenCache } from "@/lib/api";
 import { signOut, useSession } from "@/lib/auth-client";
 import type { Role } from "@/lib/types";
 import { cn, initials } from "@/lib/utils";
+
+/** Same public links as the site navbar, so users can leave the dashboard from the header */
+const SITE_LINKS = [
+  { href: "/", label: "Home" },
+  { href: "/menu", label: "Browse Menu" },
+];
 
 type NavItem = { href: string; label: string; icon: React.ElementType };
 
@@ -139,10 +146,18 @@ export function DashboardShell({ initialUser, children }: { initialUser: ShellUs
             <p className="text-sm text-muted-foreground">Hello, <span className="font-semibold text-foreground">{user.name.split(" ")[0]}</span> 👋</p>
           </div>
           <div className="flex items-center gap-2">
+            <nav className="mr-1 hidden items-center gap-1 md:flex" aria-label="Site">
+              {SITE_LINKS.map((l) => (
+                <Link key={l.href} href={l.href} className="rounded-full px-3.5 py-2 text-sm font-semibold text-foreground/80 transition-colors hover:bg-secondary hover:text-primary">
+                  {l.label}
+                </Link>
+              ))}
+            </nav>
             {user.role === "vendor" && user.subscriptionPlan !== "premium" && (
               <Button asChild size="sm" variant="accent" className="hidden sm:inline-flex"><Link href="/dashboard/vendor/subscription"><CreditCard /> Upgrade</Link></Button>
             )}
             <ThemeToggle />
+            <UserMenu user={user} />
           </div>
         </header>
         <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
