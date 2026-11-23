@@ -1,5 +1,5 @@
 "use client";
-import { ChevronLeft, ChevronRight, RotateCcw, Search, SlidersHorizontal } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin, RotateCcw, Search, SlidersHorizontal } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { api, errorMessage } from "@/lib/api";
 import { CATEGORIES } from "@/lib/constants";
 import type { MenuItem } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { MenuCard, MenuCardSkeleton } from "./MenuCard";
 
 type Resp = { data: MenuItem[]; meta: { total: number; page: number; pages: number } };
@@ -22,6 +23,7 @@ export function BrowseMenu() {
   const [search, setSearch] = useState(params.get("search") ?? "");
   const [minPrice, setMinPrice] = useState(params.get("minPrice") ?? "");
   const [maxPrice, setMaxPrice] = useState(params.get("maxPrice") ?? "");
+  const [showPrice, setShowPrice] = useState(!!(params.get("minPrice") || params.get("maxPrice")));
   const [locations, setLocations] = useState<string[]>([]);
   const [result, setResult] = useState<Resp | null>(null);
   const [loading, setLoading] = useState(true);
@@ -82,54 +84,85 @@ export function BrowseMenu() {
     router.replace(pathname, { scroll: false });
   };
 
+  const total = result?.meta.total ?? 0;
+
   return (
-    <div className="space-y-8">
-      <div className="rounded-2xl border bg-card p-4 shadow-sm sm:p-5">
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
-          <div className="relative">
-            <Search className="absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search pizzas, sides, drinks…" className="pl-10" aria-label="Search menu" />
-          </div>
-          <Select value={category} onValueChange={(v) => setParams({ category: v })}>
-            <SelectTrigger aria-label="Category"><SelectValue placeholder="Category" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL}>All categories</SelectItem>
-              {CATEGORIES.map((c) => <SelectItem key={c.name} value={c.name}>{c.name}</SelectItem>)}
-            </SelectContent>
-          </Select>
-          <Select value={location} onValueChange={(v) => setParams({ location: v })}>
-            <SelectTrigger aria-label="Location"><SelectValue placeholder="Location" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL}>All locations</SelectItem>
-              {locations.map((l) => <SelectItem key={l} value={l}>{l}</SelectItem>)}
-            </SelectContent>
-          </Select>
-          <Select value={sort} onValueChange={(v) => setParams({ sort: v })}>
-            <SelectTrigger aria-label="Sort"><SelectValue placeholder="Sort" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="newest">Newest first</SelectItem>
-              <SelectItem value="price_asc">Price: Low to High</SelectItem>
-              <SelectItem value="price_desc">Price: High to Low</SelectItem>
-              <SelectItem value="name_asc">Name: A to Z</SelectItem>
-            </SelectContent>
-          </Select>
+    <div className="space-y-6">
+      {/* Search + location + sort */}
+      <div className="grid gap-3 md:grid-cols-[1fr_auto_auto]">
+        <div className="relative">
+          <Search className="absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search pizzas, sides, desserts…" className="pl-10" aria-label="Search menu" />
         </div>
-        <div className="mt-3 flex flex-wrap items-center gap-3">
-          <span className="flex items-center gap-1.5 text-sm font-semibold text-muted-foreground">
-            <SlidersHorizontal className="size-4" /> Price
-          </span>
+        <Select value={location} onValueChange={(v) => setParams({ location: v })}>
+          <SelectTrigger aria-label="Location" className="md:w-52">
+            <span className="flex items-center gap-2 truncate">
+              <MapPin className="size-4 shrink-0 text-accent" />
+              <SelectValue placeholder="Location" />
+            </span>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={ALL}>All locations</SelectItem>
+            {locations.map((l) => <SelectItem key={l} value={l}>{l}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Select value={sort} onValueChange={(v) => setParams({ sort: v })}>
+          <SelectTrigger aria-label="Sort" className="md:w-52"><SelectValue placeholder="Sort" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="newest">Newest first</SelectItem>
+            <SelectItem value="price_asc">Price: low to high</SelectItem>
+            <SelectItem value="price_desc">Price: high to low</SelectItem>
+            <SelectItem value="name_asc">Name: A to Z</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Category chips */}
+      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0" role="tablist" aria-label="Categories">
+        {[{ name: ALL, label: "All" }, ...CATEGORIES.map((c) => ({ name: c.name, label: c.name }))].map((c) => {
+          const active = category === c.name;
+          return (
+            <button
+              key={c.name}
+              role="tab"
+              aria-selected={active}
+              onClick={() => setParams({ category: c.name })}
+              className={cn(
+                "shrink-0 cursor-pointer rounded-full border px-4 py-2 text-sm font-semibold whitespace-nowrap transition-colors",
+                active ? "border-foreground bg-foreground text-background" : "bg-card hover:border-primary hover:text-primary",
+              )}
+            >
+              {c.label}
+            </button>
+          );
+        })}
+        <button
+          onClick={() => setShowPrice((s) => !s)}
+          className={cn(
+            "flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-semibold whitespace-nowrap transition-colors",
+            showPrice ? "border-primary text-primary" : "bg-card hover:border-primary hover:text-primary",
+          )}
+        >
+          <SlidersHorizontal className="size-4" /> Price
+        </button>
+      </div>
+
+      {showPrice && (
+        <div className="flex flex-wrap items-center gap-3 rounded-2xl border bg-card p-3">
+          <span className="text-sm font-semibold text-muted-foreground">Price range</span>
           <Input type="number" min={0} value={minPrice} onChange={(e) => setMinPrice(e.target.value)} placeholder="Min $" className="h-9 w-24" aria-label="Minimum price" />
           <span className="text-muted-foreground">to</span>
           <Input type="number" min={0} value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} placeholder="Max $" className="h-9 w-24" aria-label="Maximum price" />
-          <Button variant="ghost" size="sm" onClick={reset} className="ml-auto"><RotateCcw /> Reset filters</Button>
         </div>
-      </div>
-
-      {!loading && result && (
-        <p className="text-sm text-muted-foreground">
-          Showing <span className="font-semibold text-foreground">{result.data.length}</span> of {result.meta.total} items
-        </p>
       )}
+
+      {/* Result count */}
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="font-display text-xl font-bold">
+          {loading ? "Looking for pizzas…" : `${total} ${total === 1 ? "delicious find" : "delicious finds"}`}
+        </h2>
+        <Button variant="ghost" size="sm" onClick={reset}><RotateCcw /> Reset</Button>
+      </div>
 
       {loading ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
