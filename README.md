@@ -2,9 +2,9 @@
 
 PizzaHub connects hungry customers with local pizzerias. Customers browse and order, vendors publish menus and manage orders, and admins moderate everything.
 
-- **Live site:** `https://<your-app>.vercel.app`
-- **Client repo:** `https://github.com/<you>/pizzahub-client`
-- **Server repo:** `https://github.com/<you>/pizzahub-server`
+- **Live site:** `https://a9pizzahub-client.vercel.app`
+- **Client repo:** `https://github.com/sanimmahbub456-creator/A9pizzahub-client`
+- **Server repo:** `https://github.com/sanimmahbub456-creator/A9pizzahub-server`
 
 ## Key features
 
@@ -54,8 +54,8 @@ IMGBB_API_KEY=              # server-only; uploads go through /api/upload
 ## Run locally
 
 ```bash
-git clone https://github.com/<you>/pizzahub-client.git
-cd pizzahub-client
+git clone https://github.com/sanimmahbub456-creator/A9pizzahub-client.git
+cd A9pizzahub-client
 npm install
 cp .env.example .env.local   # fill in values
 npm run dev                  # http://localhost:3000
